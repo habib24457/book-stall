@@ -7,13 +7,12 @@ const axios = require('axios').default;
 
 const AddBook = () => {
 
-    const [imageURL, setImageURL] = useState(null);
+    //const [imageURL, setImageURL] = useState(null);
 
     const [bookInfo,setBookInfo] =useState({
         bookName : '',
         bookAuthor : '',
-        bookPrice : '',
-        imageURL : imageURL,
+        bookPrice : ''
     })
 
 
@@ -27,7 +26,22 @@ const AddBook = () => {
 
     const handleSave=()=>{
         console.log(bookInfo);
+        const url ='http://localhost:5055/addNewBook';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookInfo)
+        })
+            .then(response => {
+                alert("Product saved", response);
+
+            });
+       
     }
+
+
 
     const handleImageUpload = (event) => {
         console.log(event.target.files[0]);
@@ -36,9 +50,11 @@ const AddBook = () => {
         imageData.append('image', event.target.files[0]);
 
         axios.post('https://api.imgbb.com/1/upload', imageData)
-            .then(function (response) {
-                setImageURL(response.data.data.display_url);
-                console.log(response.data.data.display_url);
+            .then(function (response) {  
+               const imgLink ={...bookInfo};
+                imgLink.imageUrl = response.data.data.display_url;
+                setBookInfo(imgLink);
+                //console.log(response.data.data.display_url);
             })
             .catch(function (error) {
                 console.log(error);
@@ -84,7 +100,7 @@ const AddBook = () => {
                         </Form.Group>
 
                         <Form.Group>
-                            <Form.Control onBlur={handleBlur} className="form-control" type="file" id="book-image" name="bookImage" onChange={handleImageUpload} label="Choose a photo" />
+                            <Form.Control onBlur={handleBlur} className="form-control" type="file" id="book-image" onChange={handleImageUpload} label="Choose a photo" />
                         </Form.Group>
 
                         <Form.Group>

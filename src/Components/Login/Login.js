@@ -1,8 +1,52 @@
 import React from 'react';
 import { Container, Navbar, Nav, Form, Button, Row, Col } from 'react-bootstrap';
 import './Login.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import firebase from 'firebase';
+import 'firebase/auth';
+import firebaseConfig from "./firebase.config";
+
+
+/**
+ * Using social media icon from fontawesome
+ * install fontawesome =  npm i --save @fortawesome/fontawesome-svg-core  
+ * install social icon = npm i --save @fortawesome/free-brands-svg-icons
+ */
+
+/**
+ * install firebase: npm install --save firebase
+ * 
+ */
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+} else {
+    firebase.app();
+}
 
 const Login = () => {
+    const handleGoogleSignin = () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth()
+            .signInWithPopup(provider)
+            .then((result) => {
+            console.log(result.user.email);
+            
+        }).catch((error) => {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
+
+    }
+
+
     return (
         <Container>
             <div className="row">
@@ -47,7 +91,11 @@ const Login = () => {
 
             <Row className="login-row">
                 <Col md={{ span: 6, offset: 3 }}>
-                    <Button variant="warning" type="submit" size="lg" block>LOGIN WITH GOOGLE</Button>
+
+                    <Button onClick={handleGoogleSignin} variant="warning" type="submit" size="lg" block className="d-flex justify-content-center">
+                        <FontAwesomeIcon icon={faGoogle} size="2x" />
+                        <h4 className="txt-design">Login With Google</h4>
+                    </Button>
                 </Col>
             </Row>
         </Container>
